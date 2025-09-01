@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TambolaMaster Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fca311;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border-radius: 12px;
+            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --touch-target-min: 44px;
+        }
+
+        .dark-mode {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #f0f0f0;
+            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 10px;
+            font-size: var(--font-size-base);
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .logo-container {
+            position: relative;
+            margin: 0 auto 10px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .app-name {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #4cc9f0, #f72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: var(--touch-target-min);
+            touch-action: manipulation;
+        }
+
+        .btn:hover, .btn:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background-color: var(--secondary);
+        }
+
+        .btn-sm {
+            padding: 10px;
+            font-size: var(--font-size-small);
+            min-height: 36px;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+        }
+
+        .btn-info {
+            background-color: var(--info);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: var(--font-size-base);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            background-color: var(--card-bg);
+            color: var(--text);
+            min-height: var(--touch-target-min);
+            -webkit-appearance: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: var(--font-size-small);
+        }
+
+        .summary-table th, .summary-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+
+        .summary-table th {
+            background-color: var(--primary);
+            color: white;
+            font-size: var(--font-size-base);
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .round-container {
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .round-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .round-content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .round-content.show {
+            display: block;
+        }
+
+        .prize-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: 8px;
+            font-size: var(--font-size-small);
+        }
+
+        .prize-percentage {
+            font-size: 0.75rem;
+            color: #666;
+            margin-left: 5px;
+        }
+
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-btn {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            cursor: pointer;
+            font-size: var(--font-size-base);
+            min-height: var(--touch-target-min);
+            touch-action: manipulation;
+        }
+
+        .financial-summary {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        .suggestion-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .suggestion-value {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: var(--font-size-base);
+        }
+
+        .difference {
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: var(--font-size-small);
+        }
+
+        .positive {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .negative {
+            background-color: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .neutral {
+            background-color: rgba(252, 163, 17, 0.2);
+            color: var(--warning);
+        }
+
+        .round-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: var(--font-size-small);
+        }
+
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .password-modal.show {
+            display: flex;
+        }
+
+        .password-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .admin-controls {
+            margin-top: 15px;
+            padding: 15px;
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.show {
+            display: block;
+        }
+
+        /* Mobile-first responsive adjustments */
+        @media (max-width: 767px) {
+            :root {
+                --border-radius: 10px;
+                --font-size-base: 14px;
+                --font-size-small: 12px;
+                --font-size-large: 16px;
+            }
+            
+            header {
+                padding: 12px;
+            }
+            
+            .app-name {
+                font-size: 1.4rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            h3 {
+                font-size: 1rem;
+            }
+            
+            .card {
+                padding: 12px;
+            }
+            
+            .btn, .toggle-btn {
+                font-size: var(--font-size-base);
+            }
+            
+            input, select {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .summary-table {
+                font-size: var(--font-size-small);
+            }
+            
+            .summary-table th, .summary-table td {
+                padding: 8px 6px;
+            }
+            
+            .toggle-container, .action-buttons {
+                gap: 8px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+
+            .app-name {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .toggle-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .suggestion-box {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .logo-container {
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                width: 70px;
+                height: 70px;
+            }
+
+            header {
+                padding: 20px;
+                padding-top: 25px;
+            }
+
+            .summary-table th, .summary-table td {
+                padding: 12px 15px;
+            }
+
+            .btn {
+                width: auto;
+                padding: 12px 20px;
+            }
+
+            .toggle-btn {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .app-name {
+                font-size: 2.8rem;
+            }
+            
+            .logo-container {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        /* Prevent horizontal scrolling */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Improve touch targets */
+        button, input[type="button"], input[type="submit"], input[type="reset"] {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Fix for iOS zoom on input focus */
+        @media screen and (max-width: 767px) {
+            input, select, textarea {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container" id="logoContainer">
+                <i class="fas fa-lock" id="defaultLogoIcon"></i>
+                <img id="logoImage" style="display: none;" alt="Event Logo">
+            </div>
+            <h1 class="app-name">TambolaMaster Pro</h1>
+            <p>Calculate booklet prices and distribute prizes efficiently for your Housie/Tambola event</p>
+        </header>
+
+        <div class="toggle-container">
+            <button class="toggle-btn" id="themeToggle"><i class="fas fa-moon icon"></i>Toggle Dark Mode</button>
+            <button class="toggle-btn" id="adminToggle"><i class="fas fa-lock icon"></i>Admin Settings</button>
+            <button class="btn btn-success" id="generatePdf"><i class="fas fa-file-pdf icon"></i>Generate PDF Report</button>
+            <button class="btn" id="saveData"><i class="fas fa-save icon"></i>Save Data</button>
+            <button class="btn btn-danger" id="resetForm"><i class="fas fa-redo icon"></i>Reset Form</button>
+        </div>
+
+        <div class="password-modal" id="passwordModal">
+            <div class="password-content">
+                <h2><i class="fas fa-lock icon"></i>Admin Access</h2>
+                <div class="form-group">
+                    <label for="passwordInput">Enter Password:</label>
+                    <input type="password" id="passwordInput" placeholder="Enter password">
+                </div>
+                <button class="btn" id="submitPassword"><i class="fas fa-key icon"></i>Submit</button>
+                <p id="passwordError" style="color: var(--danger); margin-top: 10px; display: none;">Incorrect password. Please try again.</p>
+            </div>
+        </div>
+
+        <div class="admin-section" id="adminSection">
+            <div class="card">
+                <h2><i class="fas fa-cog icon"></i>Admin Settings</h2>
+                
+                <div class="form-group">
+                    <label for="logoUpload">Upload Event Logo:</label>
+                    <input type="file" id="logoUpload" accept="image/*">
+                </div>
+                
+                <h3>Financial Parameters</h3>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="adminCallerFees">Caller Fees (₹):</label>
+                        <input type="number" id="adminCallerFees" value="1200" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminGstPercentage">GST Percentage (%):</label>
+                        <input type="number" id="adminGstPercentage" value="5" min="0" step="0.1">
+                    </div>
+                </div>
+                
+                <h3>Game Structure</h3>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="regularRoundsCount">Number of Regular Rounds:</label>
+                        <input type="number" id="regularRoundsCount" value="8" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="bingoRoundsCount">Number of Bingo Rounds:</label>
+                        <input type="number" id="bingoRoundsCount" value="2" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="partGamesCount">Number of Part Games per Regular Round:</label>
+                        <input type="number" id="partGamesCount" value="2" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="sheetPrizesCount">Number of Sheet Prizes per Regular Round:</label>
+                        <input type="number" id="sheetPrizesCount" value="2" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="regularHousesCount">Number of Houses per Regular Round:</label>
+                        <input type="number" id="regularHousesCount" value="3" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="bingoHousesCount">Number of Houses per Bingo Round:</label>
+                        <input type="number" id="bingoHousesCount" value="4" min="1">
+                    </div>
+                </div>
+                
+                <button class="btn" id="saveAdminSettings"><i class="fas fa-save icon"></i>Save Settings</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-calculator icon"></i>Booklet Pricing</h2>
+                <div class="form-group">
+                    <label for="totalPrize">Total Prize Money to Distribute (₹):</label>
+                    <input type="number" id="totalPrize" value="373" min="0">
+                </div>
+                
+                <button class="btn" id="calculatePrice"><i class="fas fa-calculator icon"></i>Calculate Suggested Price</button>
+                
+                <div class="suggestion-box">
+                    <label>Suggested Booklet Price:</label>
+                    <span class="suggestion-value" id="suggestedPrice">₹0</span>
+                    <button class="btn btn-sm btn-success accept-suggestion" data-target="actualPrice"><i class="fas fa-check icon"></i>Accept</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="targetBooklets">Target Number of Booklets to Sell:</label>
+                    <input type="number" id="targetBooklets" value="0" min="0" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualBooklets">Actual Booklets Sold:</label>
+                    <input type="number" id="actualBooklets" value="0" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="actualPrice">Actual Booklet Price (₹):</label>
+                    <input type="number" id="actualPrice" value="0" min="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="card financial-summary" id="financialSummary">
+            <h2><i class="fas fa-chart-line icon"></i>Financial Summary</h2>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Regular Round Amount (x <span id="regularCount">8</span>)</td>
+                        <td id="regularRoundAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>Bingo Round Amount (x <span id="bingoCount">2</span>)</td>
+                        <td id="bingoRoundAmount">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Prize Money</td>
+                        <td id="summaryPrize">0</td>
+                    </tr>
+                    <tr>
+                        <td>Expected Revenue (Target)</td>
+                        <td id="summaryExpected">0</td>
+                    </tr>
+                    <tr>
+                        <td>Actual Revenue</td>
+                        <td id="summaryActual">0</td>
+                    </tr>
+                    <tr>
+                        <td>Caller Fees</td>
+                        <td id="summaryCaller">0</td>
+                    </tr>
+                    <tr>
+                        <td>GST</td>
+                        <td id="summaryGst">0</td>
+                    </tr>
+                    <tr>
+                        <td>Net Profit/Loss</td>
+                        <td id="summaryNet">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" id="representativeDetails">
+            <h2><i class="fas fa-table icon"></i>Round Prize Distribution</h2>
+
+            <h3>Regular Round</h3>
+            <div class="round-container">
+                <div class="round-header" role="button" aria-expanded="false">
+                    <h3>Regular Round <button class="btn btn-sm btn-info"><i class="fas fa-chevron-down icon"></i></button></h3>
+                    <span>Suggested: ₹<span class="suggested-amount">0</span></span>
+                </div>
+                <div class="round-content">
+                    <div class="suggestion-box">
+                        <label>Actual Prize Amount (₹):</label>
+                        <span class="suggestion-value suggested-round-amount">0</span>
+                        <button class="btn btn-sm btn-success accept-suggestion" data-target="roundActual1"><i class="fas fa-check icon"></i>Accept</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="roundActual1">Actual Amount (₹):</label>
+                        <input type="number" id="roundActual1" value="0" min="0" class="round-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Difference: <span id="roundDiff1" class="difference neutral">₹0</span></label>
+                    </div>
+                    <div id="regularPrizes"></div>
+                    <div class="round-summary neutral">
+                        <span>Round Loss/Gain:</span>
+                        <span id="roundGain1">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Bingo Round</h3>
+            <div class="round-container">
+                <div class="round-header" role="button" aria-expanded="false">
+                    <h3>Bingo Round <button class="btn btn-sm btn-info"><i class="fas fa-chevron-down icon"></i></button></h3>
+                    <span>Suggested: ₹<span class="suggested-amount">0</span></span>
+                </div>
+                <div class="round-content">
+                    <div class="suggestion-box">
+                        <label>Actual Prize Amount (₹):</label>
+                        <span class="suggestion-value suggested-round-amount">0</span>
+                        <button class="btn btn-sm btn-success accept-suggestion" data-target="bingoActual1"><i class="fas fa-check icon"></i>Accept</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="bingoActual1">Actual Amount (₹):</label>
+                        <input type="number" id="bingoActual1" value="0" min="0" class="round-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Difference: <span id="bingoDiff1" class="difference neutral">₹0</span></label>
+                    </div>
+                    <div id="bingoPrizes"></div>
+                    <div class="round-summary neutral">
+                        <span>Round Loss/Gain:</span>
+                        <span id="bingoGain1">₹0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-success" id="calculatePrizes"><i class="fas fa-calculator icon"></i>Calculate Prize Distribution</button>
+        </div>
+    </div>
+
+    <script>
+        // Utility function to debounce input events
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Function to get house ratios in descending order
+        function getHouseRatios(n, isRegular) {
+            if (isRegular && n === 3) {
+                return [50, 30, 20]; // Hardcoded for regular rounds with 3 houses
+            } else if (!isRegular && n === 4) {
+                return [40, 30, 20, 10]; // Hardcoded for bingo rounds with 4 houses
+            } else {
+                const sum = n * (n + 1) / 2;
+                const ratios = [];
+                for (let k = n; k >= 1; k--) {
+                    ratios.push((k / sum) * 100);
+                }
+                return ratios.reverse();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                themeToggle.innerHTML = document.body.classList.contains('dark-mode')
+                    ? '<i class="fas fa-sun icon"></i>Toggle Light Mode'
+                    : '<i class="fas fa-moon icon"></i>Toggle Dark Mode';
+            });
+
+            // Admin toggle functionality
+            const adminToggle = document.getElementById('adminToggle');
+            const passwordModal = document.getElementById('passwordModal');
+            const adminSection = document.getElementById('adminSection');
+            const passwordInput = document.getElementById('passwordInput');
+            const submitPassword = document.getElementById('submitPassword');
+            const passwordError = document.getElementById('passwordError');
+            
+            adminToggle.addEventListener('click', function() {
+                passwordModal.classList.add('show');
+            });
+            
+            submitPassword.addEventListener('click', function() {
+                if (passwordInput.value === 'BI') {
+                    passwordModal.classList.remove('show');
+                    adminSection.classList.add('show');
+                    passwordError.style.display = 'none';
+                    passwordInput.value = '';
+                } else {
+                    passwordError.style.display = 'block';
+                }
+            });
+            
+            passwordModal.addEventListener('click', function(e) {
+                if (e.target === passwordModal) {
+                    passwordModal.classList.remove('show');
+                    passwordError.style.display = 'none';
+                    passwordInput.value = '';
+                }
+            });
+
+            // Logo upload functionality
+            const logoUpload = document.getElementById('logoUpload');
+            const logoImage = document.getElementById('logoImage');
+            const defaultLogoIcon = document.getElementById('defaultLogoIcon');
+            
+            logoUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        logoImage.src = event.target.result;
+                        logoImage.style.display = 'block';
+                        defaultLogoIcon.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Save admin settings
+            const saveAdminSettings = document.getElementById('saveAdminSettings');
+            saveAdminSettings.addEventListener('click', function() {
+                const regularRoundsCount = document.getElementById('regularRoundsCount').value;
+                const bingoRoundsCount = document.getElementById('bingoRoundsCount').value;
+                
+                document.getElementById('regularCount').textContent = regularRoundsCount;
+                document.getElementById('bingoCount').textContent = bingoRoundsCount;
+                
+                adminSection.classList.remove('show');
+                
+                initializeRounds();
+                calculateAdditionalCosts();
+                calculateFinancialSummary();
+                
+                alert('Settings saved successfully!');
+            });
+
+            // Calculate booklet price
+            const calculatePriceBtn = document.getElementById('calculatePrice');
+            calculatePriceBtn.addEventListener('click', calculateBookletPrice);
+
+            // Calculate prize distribution
+            const calculatePrizesBtn = document.getElementById('calculatePrizes');
+            calculatePrizesBtn.addEventListener('click', calculatePrizeDistribution);
+
+            // Initialize rounds
+            initializeRounds();
+
+            // Calculate initial values
+            calculateBookletPrice();
+            calculateAdditionalCosts();
+            calculateFinancialSummary();
+
+            // Debounced event listeners for inputs
+            const debouncedCalculateBookletPrice = debounce(calculateBookletPrice, 300);
+            const debouncedCalculateFinancialSummary = debounce(calculateFinancialSummary, 300);
+
+            document.getElementById('totalPrize').addEventListener('input', debouncedCalculateBookletPrice);
+            document.getElementById('actualBooklets').addEventListener('input', debouncedCalculateFinancialSummary);
+            document.getElementById('actualPrice').addEventListener('input', debouncedCalculateFinancialSummary);
+
+            // Accept suggestion buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('accept-suggestion')) {
+                    const targetId = e.target.getAttribute('data-target');
+                    const suggestionValue = e.target.parentElement.querySelector('.suggestion-value').textContent;
+                    const numericValue = parseInt(suggestionValue.replace('₹', ''));
+                    
+                    document.getElementById(targetId).value = numericValue;
+                    
+                    if (targetId.startsWith('roundActual') || targetId.startsWith('bingoActual')) {
+                        const roundId = targetId.replace('Actual', '');
+                        calculateRoundPrizes(roundId);
+                    }
+                    
+                    calculateFinancialSummary();
+                }
+            });
+
+            // Toggle round content
+            document.querySelector('.container').addEventListener('click', function(e) {
+                const roundHeader = e.target.closest('.round-header');
+                if (roundHeader) {
+                    const content = roundHeader.nextElementSibling;
+                    content.classList.toggle('show');
+                    
+                    const icon = roundHeader.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-chevron-down', !content.classList.contains('show'));
+                        icon.classList.toggle('fa-chevron-up', content.classList.contains('show'));
+                    }
+                }
+            });
+
+            // Reset form
+            document.getElementById('resetForm').addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all data?')) {
+                    document.getElementById('totalPrize').value = '373';
+                    document.getElementById('actualBooklets').value = '0';
+                    document.getElementById('actualPrice').value = '0';
+                    document.getElementById('roundActual1').value = '0';
+                    document.getElementById('bingoActual1').value = '0';
+                    
+                    calculateBookletPrice();
+                    calculatePrizeDistribution();
+                    calculateFinancialSummary();
+                }
+            });
+
+            // Save data
+            document.getElementById('saveData').addEventListener('click', function() {
+                alert('Data saved successfully! (In a real application, this would save to local storage or a database)');
+            });
+
+            // Generate PDF
+            document.getElementById('generatePdf').addEventListener('click', generatePdfReport);
+        });
+
+        function calculateBookletPrice() {
+            const totalPrize = parseInt(document.getElementById('totalPrize').value) || 0;
+            const suggestedPrice = Math.round(0.00536 * totalPrize + 373);
+            document.getElementById('suggestedPrice').textContent = '₹' + suggestedPrice;
+            
+            const targetBooklets = Math.round(totalPrize / suggestedPrice);
+            document.getElementById('targetBooklets').value = targetBooklets;
+            
+            if (parseInt(document.getElementById('actualPrice').value) === 0) {
+                document.getElementById('actualPrice').value = suggestedPrice;
+            }
+            
+            calculatePrizeDistribution();
+            calculateFinancialSummary();
+        }
+
+        function calculateAdditionalCosts() {
+            const callerFees = parseInt(document.getElementById('adminCallerFees').value) || 0;
+            const gstPercentage = parseFloat(document.getElementById('adminGstPercentage').value) || 0;
+            const totalPrize = parseInt(document.getElementById('totalPrize').value) || 0;
+            const gstAmount = Math.round(totalPrize * (gstPercentage / 100));
+            const totalCosts = callerFees + gstAmount;
+            
+            return { callerFees, gstAmount, totalCosts };
+        }
+
+        function initializeRounds() {
+            const regularPrizesContainer = document.getElementById('regularPrizes');
+            const bingoPrizesContainer = document.getElementById('bingoPrizes');
+            const partGamesCount = parseInt(document.getElementById('partGamesCount').value) || 2;
+            const sheetPrizesCount = parseInt(document.getElementById('sheetPrizesCount').value) || 2;
+            const regularHousesCount = parseInt(document.getElementById('regularHousesCount').value) || 3;
+            const bingoHousesCount = parseInt(document.getElementById('bingoHousesCount').value) || 4;
+            
+            regularPrizesContainer.innerHTML = '';
+            bingoPrizesContainer.innerHTML = '';
+            
+            // Regular round prizes
+            for (let j = 1; j <= partGamesCount; j++) {
+                regularPrizesContainer.innerHTML += `
+                    <div class="prize-item" data-type="part-game" data-index="${j}">
+                        <span>Part Game ${j} <span class="prize-percentage"></span>:</span>
+                        <span>₹<span class="prize-amount">0</span></span>
+                    </div>
+                `;
+            }
+            for (let j = 1; j <= sheetPrizesCount; j++) {
+                regularPrizesContainer.innerHTML += `
+                    <div class="prize-item" data-type="sheet-prize" data-index="${j}">
+                        <span>Sheet Prize ${j} <span class="prize-percentage"></span>:</span>
+                        <span>₹<span class="prize-amount">0</span></span>
+                    </div>
+                `;
+            }
+            for (let j = 1; j <= regularHousesCount; j++) {
+                regularPrizesContainer.innerHTML += `
+                    <div class="prize-item" data-type="house" data-index="${j}">
+                        <span>House ${j} <span class="prize-percentage"></span>:</span>
+                        <span>₹<span class="prize-amount">0</span></span>
+                    </div>
+                `;
+            }
+            
+            // Bingo round prizes
+            for (let j = 1; j <= bingoHousesCount; j++) {
+                bingoPrizesContainer.innerHTML += `
+                    <div class="prize-item" data-type="house" data-index="${j}">
+                        <span>House ${j} <span class="prize-percentage"></span>:</span>
+                        <span>₹<span class="prize-amount">0</span></span>
+                    </div>
+                `;
+            }
+            
+            // Add event listeners to round inputs with debounce
+            document.querySelectorAll('.round-input').forEach(input => {
+                input.addEventListener('input', debounce(function() {
+                    const id = this.id.replace('Actual', '');
+                    calculateRoundPrizes(id);
+                    calculateFinancialSummary();
+                }, 300));
+            });
+        }
+
+        function calculatePrizeDistribution() {
+            const totalPrize = parseInt(document.getElementById('totalPrize').value) || 0;
+            const regularRoundsCount = parseInt(document.getElementById('regularRoundsCount').value) || 8;
+            const bingoRoundsCount = parseInt(document.getElementById('bingoRoundsCount').value) || 2;
+            const totalRounds = regularRoundsCount + bingoRoundsCount;
+            const roundAmount = Math.round(totalPrize / totalRounds);
+            
+            // Update regular round
+            const regularSuggestedAmount = document.querySelector('#regularPrizes').parentElement.parentElement.querySelector('.suggested-amount');
+            regularSuggestedAmount.textContent = roundAmount;
+            document.querySelector('#regularPrizes').parentElement.parentElement.querySelector('.suggested-round-amount').textContent = roundAmount;
+            const regularActualInput = document.getElementById('roundActual1');
+            if (parseInt(regularActualInput.value) === 0) {
+                regularActualInput.value = roundAmount;
+            }
+            calculateRoundPrizes('round1');
+            
+            // Update bingo round
+            const bingoSuggestedAmount = document.querySelector('#bingoPrizes').parentElement.parentElement.querySelector('.suggested-amount');
+            bingoSuggestedAmount.textContent = roundAmount;
+            document.querySelector('#bingoPrizes').parentElement.parentElement.querySelector('.suggested-round-amount').textContent = roundAmount;
+            const bingoActualInput = document.getElementById('bingoActual1');
+            if (parseInt(bingoActualInput.value) === 0) {
+                bingoActualInput.value = roundAmount;
+            }
+            calculateRoundPrizes('bingo1');
+            
+            calculateFinancialSummary();
+            document.getElementById('financialSummary').classList.add('show');
+        }
+
+        function calculateRoundPrizes(roundId) {
+            const roundType = roundId.replace(/\d+/, '');
+            const partGamesCount = parseInt(document.getElementById('partGamesCount').value) || 2;
+            const sheetPrizesCount = parseInt(document.getElementById('sheetPrizesCount').value) || 2;
+            const regularHousesCount = parseInt(document.getElementById('regularHousesCount').value) || 3;
+            const bingoHousesCount = parseInt(document.getElementById('bingoHousesCount').value) || 4;
+            
+            let actualInput, suggestedAmount, diffElement, gainElement, roundElement;
+            
+            if (roundType === 'round') {
+                actualInput = document.getElementById('roundActual1');
+                suggestedAmount = parseInt(document.querySelector('#regularPrizes').parentElement.parentElement.querySelector('.suggested-amount').textContent);
+                diffElement = document.getElementById('roundDiff1');
+                gainElement = document.getElementById('roundGain1');
+                roundElement = document.querySelector('#regularPrizes').parentElement;
+            } else {
+                actualInput = document.getElementById('bingoActual1');
+                suggestedAmount = parseInt(document.querySelector('#bingoPrizes').parentElement.parentElement.querySelector('.suggested-amount').textContent);
+                diffElement = document.getElementById('bingoDiff1');
+                gainElement = document.getElementById('bingoGain1');
+                roundElement = document.querySelector('#bingoPrizes').parentElement;
+            }
+            
+            const actualAmount = parseInt(actualInput.value) || 0;
+            const difference = actualAmount - suggestedAmount;
+            
+            diffElement.textContent = '₹' + Math.abs(difference);
+            diffElement.className = 'difference ' + (difference > 0 ? 'negative' : difference < 0 ? 'positive' : 'neutral');
+            gainElement.parentElement.className = 'round-summary ' + (difference > 0 ? 'negative' : difference < 0 ? 'positive' : 'neutral');
+            gainElement.textContent = '₹' + (-difference);
+            
+            if (roundType === 'round') {
+                const partSheetCount = partGamesCount + sheetPrizesCount;
+                const partSheetTotal = Math.round(actualAmount * 0.4);
+                const partSheetPrize = Math.round(partSheetTotal / partSheetCount);
+                const partSheetPercentage = (100 / partSheetCount).toFixed(2) + '% of 40%';
+                
+                roundElement.querySelectorAll('[data-type="part-game"], [data-type="sheet-prize"]').forEach(item => {
+                    item.querySelector('.prize-percentage').textContent = `(${partSheetPercentage})`;
+                    item.querySelector('.prize-amount').textContent = partSheetPrize;
+                });
+                
+                const houseTotal = Math.round(actualAmount * 0.6);
+                const houseRatios = getHouseRatios(regularHousesCount, true);
+                roundElement.querySelectorAll('[data-type="house"]').forEach((item, index) => {
+                    const prize = Math.round((houseRatios[index] / 100) * houseTotal);
+                    item.querySelector('.prize-percentage').textContent = `(${houseRatios[index].toFixed(2)}% of 60%)`;
+                    item.querySelector('.prize-amount').textContent = prize;
+                });
+            } else {
+                const houseRatios = getHouseRatios(bingoHousesCount, false);
+                roundElement.querySelectorAll('[data-type="house"]').forEach((item, index) => {
+                    const prize = Math.round((houseRatios[index] / 100) * actualAmount);
+                    item.querySelector('.prize-percentage').textContent = `(${houseRatios[index].toFixed(2)}%)`;
+                    item.querySelector('.prize-amount').textContent = prize;
+                });
+            }
+        }
+
+        function calculateFinancialSummary() {
+            const totalPrize = parseInt(document.getElementById('totalPrize').value) || 0;
+            const targetBooklets = parseInt(document.getElementById('targetBooklets').value) || 0;
+            const actualBooklets = parseInt(document.getElementById('actualBooklets').value) || 0;
+            const actualPrice = parseInt(document.getElementById('actualPrice').value) || 0;
+            const { callerFees, gstAmount } = calculateAdditionalCosts();
+            const regularRoundsCount = parseInt(document.getElementById('regularRoundsCount').value) || 8;
+            const bingoRoundsCount = parseInt(document.getElementById('bingoRoundsCount').value) || 2;
+            const totalRounds = regularRoundsCount + bingoRoundsCount;
+            const regularRoundAmount = Math.round(totalPrize / totalRounds);
+            const bingoRoundAmount = Math.round(totalPrize / totalRounds);
+            
+            const expectedRevenue = Math.round(targetBooklets * actualPrice);
+            const actualRevenue = Math.round(actualBooklets * actualPrice);
+            const netProfitLoss = Math.round(actualRevenue - totalPrize - callerFees - gstAmount);
+            
+            document.getElementById('regularRoundAmount').textContent = regularRoundAmount;
+            document.getElementById('bingoRoundAmount').textContent = bingoRoundAmount;
+            document.getElementById('summaryPrize').textContent = totalPrize;
+            document.getElementById('summaryExpected').textContent = expectedRevenue;
+            document.getElementById('summaryActual').textContent = actualRevenue;
+            document.getElementById('summaryCaller').textContent = callerFees;
+            document.getElementById('summaryGst').textContent = gstAmount;
+            document.getElementById('summaryNet').textContent = netProfitLoss;
+            
+            const netElement = document.getElementById('summaryNet');
+            netElement.style.color = netProfitLoss > 0 ? 'green' : netProfitLoss < 0 ? 'red' : '';
+        }
+
+        function generatePdfReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const margin = 10;
+            let y = margin;
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+            const maxY = pageHeight - margin;
+
+            // Add logo if available
+            const logoImage = document.getElementById('logoImage');
+            if (logoImage.src && logoImage.style.display !== 'none') {
+                try {
+                    doc.addImage(logoImage.src, 'PNG', margin, y, 30, 30);
+                    y += 35;
+                } catch (e) {
+                    console.warn('Failed to add logo to PDF:', e);
+                }
+            } else {
+                y += 10; // Space if no logo
+            }
+
+            // Header
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TambolaMaster Pro Report', pageWidth / 2, y, { align: 'center' });
+            y += 8;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Generated on: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, pageWidth / 2, y, { align: 'center' });
+            y += 15;
+
+            // Booklet Pricing Table
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Booklet Pricing', margin, y);
+            y += 8;
+            doc.autoTable({
+                startY: y,
+                head: [['Description', 'Value']],
+                body: [
+                    ['Total Prize Money', `₹${document.getElementById('totalPrize').value}`],
+                    ['Suggested Booklet Price', document.getElementById('suggestedPrice').textContent],
+                    ['Target Booklets', document.getElementById('targetBooklets').value],
+                    ['Actual Booklets Sold', document.getElementById('actualBooklets').value],
+                    ['Actual Booklet Price', `₹${document.getElementById('actualPrice').value}`]
+                ],
+                styles: { fontSize: 10, cellPadding: 3, halign: 'left', valign: 'middle' },
+                headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: margin, right: margin },
+                columnStyles: { 0: { cellWidth: 100 }, 1: { cellWidth: 80 } }
+            });
+            y = doc.lastAutoTable.finalY + 10;
+
+            // Additional Costs Table
+            if (y + 50 > maxY) {
+                doc.addPage();
+                y = margin;
+            }
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Additional Costs', margin, y);
+            y += 8;
+            const { callerFees, gstAmount, totalCosts } = calculateAdditionalCosts();
+            doc.autoTable({
+                startY: y,
+                head: [['Description', 'Value']],
+                body: [
+                    ['Caller Fees', `₹${callerFees}`],
+                    ['GST Percentage', `${document.getElementById('adminGstPercentage').value}%`],
+                    ['GST Amount', `₹${gstAmount}`],
+                    ['Total Additional Costs', `₹${totalCosts}`]
+                ],
+                styles: { fontSize: 10, cellPadding: 3, halign: 'left', valign: 'middle' },
+                headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: margin, right: margin },
+                columnStyles: { 0: { cellWidth: 100 }, 1: { cellWidth: 80 } }
+            });
+            y = doc.lastAutoTable.finalY + 10;
+
+            // Round Prize Distribution
+            if (y + 50 > maxY) {
+                doc.addPage();
+                y = margin;
+            }
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Round Prize Distribution', margin, y);
+            y += 8;
+
+            // Regular Round Table
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Regular Round', margin, y);
+            y += 6;
+            const regularActualAmount = document.getElementById('roundActual1').value;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Actual Amount: ₹${regularActualAmount}`, margin + 5, y);
+            y += 6;
+            const regularPrizes = [];
+            document.querySelectorAll('#regularPrizes .prize-item').forEach(item => {
+                const name = item.querySelector('span:first-child').textContent.split(' (')[0];
+                const amount = item.querySelector('.prize-amount').textContent;
+                regularPrizes.push([name, `₹${amount}`]);
+            });
+            regularPrizes.push(['Loss/Gain', document.getElementById('roundGain1').textContent]);
+            doc.autoTable({
+                startY: y,
+                head: [['Prize Type', 'Amount']],
+                body: regularPrizes,
+                styles: { fontSize: 10, cellPadding: 3, halign: 'left', valign: 'middle' },
+                headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: margin + 5, right: margin },
+                columnStyles: { 0: { cellWidth: 95 }, 1: { cellWidth: 75 } }
+            });
+            y = doc.lastAutoTable.finalY + 10;
+
+            // Bingo Round Table
+            if (y + 50 > maxY) {
+                doc.addPage();
+                y = margin;
+            }
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Bingo Round', margin, y);
+            y += 6;
+            const bingoActualAmount = document.getElementById('bingoActual1').value;
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Actual Amount: ₹${bingoActualAmount}`, margin + 5, y);
+            y += 6;
+            const bingoPrizes = [];
+            document.querySelectorAll('#bingoPrizes .prize-item').forEach(item => {
+                const name = item.querySelector('span:first-child').textContent.split(' (')[0];
+                const amount = item.querySelector('.prize-amount').textContent;
+                bingoPrizes.push([name, `₹${amount}`]);
+            });
+            bingoPrizes.push(['Loss/Gain', document.getElementById('bingoGain1').textContent]);
+            doc.autoTable({
+                startY: y,
+                head: [['Prize Type', 'Amount']],
+                body: bingoPrizes,
+                styles: { fontSize: 10, cellPadding: 3, halign: 'left', valign: 'middle' },
+                headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: margin + 5, right: margin },
+                columnStyles: { 0: { cellWidth: 95 }, 1: { cellWidth: 75 } }
+            });
+            y = doc.lastAutoTable.finalY + 10;
+
+            // Financial Summary Table
+            if (y + 50 > maxY) {
+                doc.addPage();
+                y = margin;
+            }
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Financial Summary', margin, y);
+            y += 8;
+            const summaryRows = [
+                [`Regular Round Amount (x ${document.getElementById('regularCount').textContent})`, `₹${document.getElementById('regularRoundAmount').textContent}`],
+                [`Bingo Round Amount (x ${document.getElementById('bingoCount').textContent})`, `₹${document.getElementById('bingoRoundAmount').textContent}`],
+                ['Total Prize Money', `₹${document.getElementById('summaryPrize').textContent}`],
+                ['Expected Revenue', `₹${document.getElementById('summaryExpected').textContent}`],
+                ['Actual Revenue', `₹${document.getElementById('summaryActual').textContent}`],
+                ['Caller Fees', `₹${document.getElementById('summaryCaller').textContent}`],
+                ['GST', `₹${document.getElementById('summaryGst').textContent}`],
+                ['Net Profit/Loss', `₹${document.getElementById('summaryNet').textContent}`]
+            ];
+            doc.autoTable({
+                startY: y,
+                head: [['Description', 'Amount']],
+                body: summaryRows,
+                styles: { fontSize: 10, cellPadding: 3, halign: 'left', valign: 'middle' },
+                headStyles: { fillColor: [67, 97, 238], textColor: [255, 255, 255], fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [240, 240, 240] },
+                margin: { left: margin, right: margin },
+                columnStyles: { 0: { cellWidth: 100 }, 1: { cellWidth: 80 } }
+            });
+
+            doc.save('TambolaMaster_Report.pdf');
+        }
+    </script>
+</body>
+</html>
